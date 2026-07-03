@@ -1,0 +1,11 @@
+IF=1
+PAR_IZ=2
+PAR_DER=3
+IDT=4
+MAY=5
+NUM=6
+WS=7
+'if'=1
+'('=2
+')'=3
+'>'=5
