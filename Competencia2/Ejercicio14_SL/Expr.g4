@@ -1,0 +1,52 @@
+// Numero de control: 22031149
+
+grammar Expr;
+
+root: expr EOF ;    
+
+expr : (CREATE|TABLE|SERIAL|PRIMARY|KEY|VARCHAR|NOT|NULL|INTEGER|DATE|INSERT|INTO|VALUES|SELECT|FROM|INNER|JOIN|
+        ON|WHERE|UPDATE|SET|NUM|CADENA|ID|ASIG|COMA|PUNTO|PUNTO_COMA|PAR_IZQ|PAR_DER|ASTERISCO)* ;
+
+CREATE: 'CREATE';
+TABLE: 'TABLE';
+SERIAL: 'SERIAL';
+PRIMARY: 'PRIMARY';
+KEY: 'KEY';
+VARCHAR: 'VARCHAR';
+NOT: 'NOT';
+NULL: 'NULL';
+INTEGER: 'INTEGER';
+DATE: 'DATE';
+INSERT: 'INSERT';
+INTO: 'INTO';
+VALUES: 'VALUES';
+SELECT: 'SELECT';
+FROM: 'FROM';
+INNER: 'INNER';
+JOIN: 'JOIN';
+ON: 'ON';
+WHERE: 'WHERE';
+UPDATE: 'UPDATE';
+SET: 'SET';
+
+NUM : [0-9]+ ;
+CADENA : '\'' (~['\r\n])* '\'' ;
+
+ID : [a-zA-Z_][a-zA-Z0-9_]* ;
+
+ASIG : '=' ;
+COMA: ',';
+MAS : '+' ;
+MAYOR_IGUAL:'>=';
+
+PUNTO : '.' ;
+PUNTO_COMA : ';' ;
+PAR_IZQ : '(' ;
+PAR_DER : ')' ;
+LLAVE_IZQ : '{' ;
+LLAVE_DER : '}' ;
+COR_IZQ : '[' ;
+COR_DER : ']' ;
+ASTERISCO: '*';
+
+WS : [ \t\r\n]+ -> skip ;
