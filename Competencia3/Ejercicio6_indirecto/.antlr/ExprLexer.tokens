@@ -1,0 +1,9 @@
+POR=1
+VAR=2
+NUM=3
+OP=4
+MAS=5
+MULT=6
+WS=7
+'+'=5
+'*'=6

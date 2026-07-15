@@ -1,0 +1,13 @@
+PAL=1
+PRINT=2
+ESP=3
+PARI=4
+PARF=5
+CMA=6
+PTO_COMA=7
+CAD=8
+WS=9
+'print'=2
+'('=4
+')'=5
+';'=7

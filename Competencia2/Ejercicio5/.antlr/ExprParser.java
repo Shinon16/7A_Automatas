@@ -1,4 +1,4 @@
-// Generated from c:/Users/klauf/OneDrive/Documentos/Escritorio/pruebas_7a/codigosequipo/Competencia2/Ejercicio5/Expr.g4 by ANTLR 4.13.1
+// Generated from d:/7A_Automatas/Competencia2/Ejercicio5/Expr.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

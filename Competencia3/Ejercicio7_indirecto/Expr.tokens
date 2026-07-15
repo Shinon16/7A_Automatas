@@ -1,0 +1,11 @@
+PAL=1
+INT=2
+VAR=3
+VAL=4
+IDT=5
+ASIG=6
+IGUAL=7
+NUM=8
+WS=9
+'int'=2
+'='=7

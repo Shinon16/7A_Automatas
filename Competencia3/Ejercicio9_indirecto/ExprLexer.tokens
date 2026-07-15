@@ -1,0 +1,15 @@
+PAL=1
+IF=2
+PAR_IZ=3
+PAR_DER=4
+VAL=5
+IDT=6
+OP=7
+MAY=8
+VAR=9
+NUM=10
+WS=11
+'if'=2
+'('=3
+')'=4
+'>'=8
