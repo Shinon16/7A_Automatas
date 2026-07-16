@@ -8,40 +8,52 @@ from Helper import Helper
 class App:
 
     def __init__(self):
-        st.set_page_config(page_title="Analizador Léxico", layout="wide")
+        st.set_page_config(page_title="Analizador de SQL", layout="wide")
         self.analizador = AnalizadorLexico()
         self.sintactico = Helper()
 
-    def ejecutar(self):
-        st.title("Analizador Léxico con ANTLR y Streamlit")
-        st.write("Sube un archivo '.sql' o '.txt' para ver tokens y errores léxicos.")
+    # Metodo de apoyo para mostrar una lista de errores de forma clara,
+    # tanto en tabla como en texto (linea por linea)
+    def mostrar_errores(self, errores):
 
-        archivo_subido = st.file_uploader("Selecciona tu archivo", type=["sql", "txt"])
+        st.dataframe(errores, use_container_width=True)
+
+        for err in errores:
+            st.write(f"- Linea {err['linea']}, columna {err['columna']}: {err['mensaje']}")
+
+    def ejecutar(self):
+        st.title("Analizador de SQL con ANTLR y Streamlit")
+        st.write("Sube un archivo `.txt` o '.sql' para ver tokens y errores lexicos.")
+
+        archivo_subido = st.file_uploader("Selecciona tu archivo", type=["txt", "sql"])
 
         if archivo_subido is None:
-            st.info("Primero sube un archivo .sql o .txt para analizarlo.")
+            st.info("Primero sube un archivo .txt")
             return
 
         archivo = Archivo(archivo_subido)
 
         if not archivo.es_txt():
-            st.error("El archivo debe ser .sql o .txt")
+            st.error("El archivo debe ser .txt")
             return
 
         codigo = archivo.leer()
         info = archivo.obtener_info()
 
-        st.subheader("Información del archivo")
+        st.subheader("Informacion del archivo")
         st.write("Nombre:", info["nombre"])
         st.write("Extension:", info["extension"])
 
-        st.subheader("Código original")
+        st.subheader("Codigo original")
         st.code(codigo, language="text")
 
+        # ------------------------------------------------------------
+        # ETAPA 1: Analisis lexico
+        # ------------------------------------------------------------
         self.analizador.analizar(codigo)
 
         tokens = self.analizador.obtener_tokens()
-        errores = self.analizador.obtener_errores()
+        errores_lexicos = self.analizador.obtener_errores()
 
         st.subheader("Tokens")
 
@@ -50,44 +62,63 @@ class App:
         else:
             st.dataframe(tokens, use_container_width=True)
 
-        st.subheader("Errores léxicos")
+        st.subheader("Errores lexicos")
 
-        if len(errores) == 0:
-            st.success("No hay errores léxicos")
-        else:
-            st.dataframe(errores, use_container_width=True)
-            
+        if len(errores_lexicos) > 0:
+
+            st.error(f"Se encontraron {len(errores_lexicos)} errores lexicos. Se detiene el analisis.")
+            self.mostrar_errores(errores_lexicos)
+
+            # Detenemos aqui: si hay errores lexicos no tiene caso
+            # seguir con el analisis sintactico ni el semantico
+            return
+
+        st.success("No hay errores lexicos")
+
+        # ------------------------------------------------------------
+        # ETAPA 2: Analisis sintactico
+        # ------------------------------------------------------------
         st.subheader("Analisis Sintactico")
 
         resultado = self.sintactico.analizar(codigo)
 
-        if resultado["correcto"]:
+        if not resultado["correcto"]:
 
-            st.success("No se encontraron errores sintácticos")
+            errores_sintacticos = resultado["errores_sintacticos"]
 
-            st.subheader("Arbol Sintáctico")
+            st.error(f"Se encontraron {len(errores_sintacticos)} errores sintacticos. Se detiene el analisis.")
+            self.mostrar_errores(errores_sintacticos)
 
-            st.code(
-                resultado["arbol"].toStringTree(
-                    recog=resultado["parser"]
-                ),
-                language="text"
-            )
-            st.subheader("Analisis Semantico")
- 
-            errores_semanticos = resultado["errores_semanticos"]
- 
-            if len(errores_semanticos) == 0:
-                st.success("No se encontraron errores semanticos")
-            else:
-                st.error(f"Se encontraron {len(errores_semanticos)} errores semanticos.")
-                st.dataframe(errores_semanticos, use_container_width=True)
- 
-        else:
+            # Detenemos aqui: un arbol mal formado no se puede
+            # analizar semanticamente de forma confiable
+            return
 
-            st.error(
-                f"Se encontraron {resultado['errores']} errores sintácticos."
-            )
+        st.success("No se encontraron errores sintacticos")
+
+        st.subheader("Arbol Sintactico")
+
+        st.code(
+            resultado["arbol"].toStringTree(
+                recog=resultado["parser"]
+            ),
+            language="text"
+        )
+
+        # ------------------------------------------------------------
+        # ETAPA 3: Analisis semantico
+        # ------------------------------------------------------------
+        st.subheader("Analisis Semantico")
+
+        errores_semanticos = resultado["errores_semanticos"]
+
+        if len(errores_semanticos) > 0:
+
+            st.error(f"Se encontraron {len(errores_semanticos)} errores semanticos.")
+            self.mostrar_errores(errores_semanticos)
+            return
+
+        st.success("No se encontraron errores semanticos")
+        st.success("El codigo paso las tres etapas de analisis sin errores.")
 
 
 if __name__ == "__main__":
