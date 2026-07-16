@@ -1,0 +1,1 @@
+SELECT Nombre, Edad FROM Clientes WHERE Edad > 18 ORDER Ciudad;
