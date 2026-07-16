@@ -124,7 +124,7 @@ selectStatement: SELECT DISTINCT? selectList FROM tableReference joinClause* whe
 
 selectList: STAR | expression (COMA expression)* ;
 
-tableReference: IDT;
+tableReference: IDT alias?;
 
 alias: IDT;
 
@@ -161,7 +161,7 @@ tableConstraint: CONSTRAINT IDT PRIMARY KEY LPAREN columnList RPAREN | CONSTRAIN
 
 whereClause: WHERE condition;
 
-joinClause: (INNER | LEFT | RIGHT)? JOIN IDT alias? ON condition;
+joinClause: (INNER | LEFT | RIGHT)? JOIN tableReference ON condition;
 
 groupByClause: GROUP BY columnList;
 
